@@ -67,8 +67,21 @@
         <div class="flex-center position-ref full-height">
             @if (Route::has('login'))
                 <div class="top-right links">
+                    
+                  
+                    
                     @auth
                         <a href="{{ url('/home') }}">Home</a>
+                        <a href="{{ route('posts.index') }}">Post</a>
+                        <a class="dropdown-item" href="{{ route('logout') }}"
+                                       onclick="event.preventDefault();
+                                                     document.getElementById('logout-form').submit();">
+                                        {{ __('Logout') }}
+                        </a>
+                        <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                          @csrf
+                        </form>               
+                                   
                     @else
                         <a href="{{ route('login') }}">Login</a>
 
@@ -79,7 +92,7 @@
                 </div>
             @endif
 
-            <div class="content">
+            {{-- <div class="content">
                 <div class="title m-b-md">
                     Laravel
                 </div>
@@ -94,7 +107,7 @@
                     <a href="https://vapor.laravel.com">Vapor</a>
                     <a href="https://github.com/laravel/laravel">GitHub</a>
                 </div>
-            </div>
+            </div> --}}
         </div>
     </body>
 </html>

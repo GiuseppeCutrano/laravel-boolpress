@@ -26,6 +26,7 @@ Route::get('/home', 'HomeController@index')->name('home');
 
 
 
+
 Route::prefix('free-zone')
 
 ->group(function () {
@@ -38,7 +39,8 @@ Route::prefix('free-zone')
 Route::prefix('restricted-zone')
 ->middleware('auth')
 ->group(function () {
-    Route::get('hello', 'TestController@logged')
+    Route::get('hello', 'TestController@logged');
+    Route::resource('posts', 'PostController');
 
-    ->name('saluti');
+   
 });
