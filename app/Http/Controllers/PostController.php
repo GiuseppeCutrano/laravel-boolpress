@@ -4,6 +4,10 @@ namespace App\Http\Controllers;
 
 
 use Illuminate\Http\Request;
+use App\PostModel;
+use App\CategoriesModel;
+use App\PostInformationModel;
+use App\TagsModel;
 
 class PostController extends Controller
 {
@@ -14,8 +18,8 @@ class PostController extends Controller
      */
     public function index()
     {
-        
-        return view('content.index');
+        $posts = PostModel::all();
+        return view('content.index',compact("posts"));
     }
 
     /**
