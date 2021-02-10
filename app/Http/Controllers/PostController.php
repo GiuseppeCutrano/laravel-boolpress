@@ -29,7 +29,14 @@ class PostController extends Controller
      */
     public function create()
     {
-        //
+        {
+            $tags = TagsModel::all();
+            $categories = CategoriesModel::all();
+            return view("content.create", compact("tags", "categories"));
+
+            
+            
+        }
     }
 
     /**
@@ -40,7 +47,38 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $data = $request->all();
+
+        $validated = $request->validate([
+            'title' => 'required|string|min:3',
+            'author' => 'required|string|min:3',
+        ]);
+
+        $newPost = PostModel::create([
+            "title" => $validated["title"],
+            "author" => $validated["author"],
+            "category_id" => $data["categories"]
+        ]);
+
+
+        $newPost->save();
+
+
+
+        $postInfo = PostInformationModel::create([
+            "post_id" => $newPost->id,
+            "description" => $data["description"],
+            "slug" => "prova_slug"
+            
+        ]);
+
+        $postInfo->save();
+
+        foreach ($data["tags"] as $tag) {
+            $newPost->tags()->attach($tag);
+        }
+
+        return view('content.store');
     }
 
     /**
@@ -51,7 +89,12 @@ class PostController extends Controller
      */
     public function show($id)
     {
-        //
+        $posts= PostModel::find($id);
+        $detail = $posts->postInformation;
+        $category = $posts->categories; 
+        $tags = $posts->tags;
+              
+        return view("content.show", compact("detail","posts","category", "tags"));
     }
 
     /**
@@ -62,7 +105,11 @@ class PostController extends Controller
      */
     public function edit($id)
     {
-        //
+        $posts = PostModel::find($id);
+        $tags = TagsModel::all();
+        $categories = CategoriesModel::all();
+
+        return view("content.edit", compact("posts", "tags", "categories"));
     }
 
     /**
@@ -74,7 +121,17 @@ class PostController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $posts = PostModel::find($id);
+        $data = $request->all();
+        $posts->tags()->detach();
+        $posts->update($data);
+
+        $posts->postInformation->update($data);
+
+        $posts->tags()->attach($data["tags"]);
+
+
+        return redirect()->route("posts.index");
     }
 
     /**
@@ -85,6 +142,19 @@ class PostController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $post = PostModel::find($id);
+        $post->postInformation->delete();
+        
+        foreach ($post->tags as $tag){
+            
+            $post->tags()->detach($tag->id);
+        }
+        
+            $post->delete();
+            return redirect()->back();
+        
+       /*  $post->delete(); */
+
+        
     }
 }
